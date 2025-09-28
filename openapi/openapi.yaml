@@ -1,0 +1,97 @@
+openapi: 3.0.3
+info:
+  title: GitHub Repo Popularity API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /repos/popularity:
+    get:
+      summary: Search GitHub repos and return result with a popularity score attached to each repo.
+      parameters:
+        - in: query
+          name: language
+          required: true
+          schema: { type: string }
+        - in: query
+          name: created_after
+          required: true
+          schema: { type: string, format: date }
+        - in: query
+          name: q
+          required: false
+          schema: { type: string }
+        - in: query
+          name: per_page
+          schema: { type: integer, minimum: 1, maximum: 100, default: 10 }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, maximum: 10, default: 1 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PopularityResponse'
+              examples:
+                sample:
+                  value:
+                    query:
+                      language: TypeScript
+                      created_after: "2024-01-01"
+                      per_page: 5
+                      page: 1
+                      q: ""
+                    result_count: 5
+                    items:
+                      - id: 123
+                        name: example
+                        full_name: owner/example
+                        html_url: https://github.com/owner/example
+                        description: Example repo
+                        language: TypeScript
+                        topics: [cli, tools]
+                        stargazers_count: 120
+                        forks_count: 10
+                        updated_at: "2025-09-01T12:00:00Z"
+                        created_at: "2025-04-01T10:00:00Z"
+                        watchers_count: 120
+                        open_issues_count: 2
+                        score: 6.123456
+        '400': { description: Bad request (invalid query) }
+        '500': { description: Internal server error }
+components:
+  schemas:
+    RepoItem:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        full_name: { type: string }
+        html_url: { type: string, format: uri }
+        description: { type: string, nullable: true }
+        language: { type: string, nullable: true }
+        topics: { type: array, items: { type: string } }
+        stargazers_count: { type: integer }
+        forks_count: { type: integer }
+        updated_at: { type: string, format: date-time }
+        created_at: { type: string, format: date-time }
+        watchers_count: { type: integer }
+        open_issues_count: { type: integer }
+        score: { type: number }
+    PopularityResponse:
+      type: object
+      properties:
+        query:
+          type: object
+          properties:
+            language: { type: string }
+            created_after: { type: string }
+            per_page: { type: integer }
+            page: { type: integer }
+            q: { type: string }
+        result_count: { type: integer }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/RepoItem' }
