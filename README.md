@@ -6,22 +6,28 @@ This is a tiny Node.js service by which you can search GitHub repositories and g
 - Docker (for Redis cache)
 
 # Quick start
+```
 npm install
 cp .env.sample .env (update env vars as needed)
 npm run cache:up
 npm start
+```
 
 # Tests
+```
 npm test
+```
 
 # OpenAPI spec check
+```
 npm run openapi:validate
+```
 
 # Swagger UI
-Visit http://localhost:3000/docs
+- Visit http://localhost:3000/docs
 
 # APIs
-`GET /repos/popularity`
+- `GET /repos/popularity`
 
 ### Query params
 - language: (required) - e.g., JavaScript
